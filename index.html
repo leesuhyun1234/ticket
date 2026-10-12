@@ -382,6 +382,17 @@ dl { margin: 0; }
 <div class="modal" id="modal" hidden><div class="modal-card" id="modalCard" role="dialog" aria-modal="true"></div></div>
 
 <script>
+// 문제 확인용: 스크립트 오류가 나면 화면에 오류 내용을 보여 준다 (캡처해서 전달)
+window.addEventListener('error', function (e) {
+  var box = document.querySelector('.boot') || document.getElementById('main');
+  if (!box) return;
+  var p = document.createElement('p');
+  p.style.cssText = 'color:#e8343a;font-size:13px;word-break:break-all';
+  p.textContent = '오류: ' + (e.message || '알 수 없음') + ' (' + (e.lineno || '-') + '줄) · ' + navigator.userAgent;
+  box.appendChild(p);
+});
+</script>
+<script>
 const STEPS = ['경기 선택', '날짜 선택', '좌석 선택', '인원 선택', '결제', '티켓 출력'];
 const MAX = 5, FEE = 1000;
 const ROWS = 'ABCDEFGH'.split(''), COLS = 12;
