@@ -88,7 +88,15 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 @media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; min-width: 0; }
 @media (max-width: 560px) { .panel { padding: 18px 14px; } }
-.boot { display: grid; gap: 8px; padding: 40px 8px; text-align: center; color: var(--muted); } display: grid; gap: 4px; margin-bottom: 20px; }
+.boot { display: grid; gap: 8px; padding: 40px 8px; text-align: center; color: var(--muted); }
+.boot h2 { color: var(--fg); font-size: 20px; }
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 22px; }
+.mode { display: grid; gap: 2px; text-align: left; padding: 14px 18px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); }
+.mode b { font-size: 18px; }
+.mode span { font-size: 13px; color: var(--muted); }
+.mode.on { border-color: var(--accent); background: var(--accent-soft); }
+.mode.on b { color: var(--accent); }
+.phead { display: grid; gap: 4px; margin-bottom: 20px; }
 .phead h2 { font-size: 22px; font-weight: 900; }
 .phead p { margin: 0; color: var(--muted); }
 .sec-title { font-size: 16px; font-weight: 700; margin: 0 0 12px; }
@@ -268,9 +276,12 @@ dl { margin: 0; }
   :root { padding: 0 !important; }
   body > * { display: none !important; }
   body > #printArea { display: block !important; }
-  #printArea img { display: block; width: 100mm; height: 148mm; max-width: none; }
+  #printArea img { display: block; width: 100mm; height: 148mm; max-width: none; page-break-after: always; break-after: page; }
+  #printArea img:last-child { page-break-after: auto; break-after: auto; }
 }
 .print-prev { display: block; width: auto; max-width: 100%; max-height: 58vh; max-height: 58dvh; margin: 0 auto; border-radius: 6px; box-shadow: 0 0 0 1px var(--line), var(--shadow); }
+.print-list { display: flex; gap: 10px; overflow-x: auto; max-width: 100%; padding: 4px; }
+.print-list .print-prev { flex: none; max-height: 42vh; margin: 0; }
 .btn.dl { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .tap-note { font-size: 13px !important; }
 
@@ -292,6 +303,13 @@ dl { margin: 0; }
 .cp-value .ph { color: var(--seat-line); }
 .cp-value .caret { display: inline-block; width: 2px; height: 26px; background: var(--accent); vertical-align: -4px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
 .cp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cp-example { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 2px dashed var(--seat-line); border-radius: 10px; background: var(--surface-2); }
+.cp-example span { flex: none; font-size: 13px; font-weight: 700; color: var(--accent-ink); background: var(--accent); border-radius: 4px; padding: 2px 8px; }
+.cp-example b { font-size: 26px; letter-spacing: .06em; white-space: nowrap; }
+.zshape.off { fill: var(--seat-sold); opacity: .7; cursor: default; }
+.zshape.off:hover { opacity: .7; }
+.date-grid.easy { grid-template-columns: minmax(0, 520px); }
+.date-grid.easy .round { padding: 20px 22px; }
 .cp-err { min-height: 20px; font-size: 14px; font-weight: 700; color: var(--accent); }
 .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .keypad button { height: 60px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -367,7 +385,7 @@ dl { margin: 0; }
 <header class="top">
   <div class="wrap">
     <div class="brand">TICKET <b>LAB</b></div>
-    <span class="practice">실습용</span>
+    <span class="practice" id="modeChip">실습용</span>
     <span class="top-note">모의 예매 화면입니다 · 실제 결제는 이루어지지 않습니다</span>
   </div>
 </header>
@@ -394,6 +412,10 @@ window.addEventListener('error', function (e) {
 </script>
 <script>
 const STEPS = ['경기 선택', '날짜 선택', '좌석 선택', '인원 선택', '결제', '티켓 출력'];
+// 쉬운 버전(easy.html)은 이 값을 true로 바꿔서 만든다
+let EASY = false;
+try { if (location.hash === '#easy') EASY = true; } catch (e) {}
+const EASY_ZONE = 'first', EASY_PEOPLE = 3; // 쉬운 버전: 홈 응원석(1루)만, 3명만
 const MAX = 5, FEE = 1000;
 const ROWS = 'ABCDEFGH'.split(''), COLS = 12;
 const WD = ['일', '월', '화', '수', '목', '금', '토'];
@@ -506,7 +528,11 @@ const PAY_ICONS = {
 
 /* 단계별 화면 */
 function step1() {
-  return `<div class="phead"><h2>경기 선택</h2><p>예매할 경기의 포스터를 선택한 뒤 아래 [다음] 버튼을 누르세요.</p></div>
+  return `<div class="modes" role="group" aria-label="난이도">
+    <button type="button" class="mode${EASY ? '' : ' on'}" data-act="mode" data-id="normal" aria-pressed="${!EASY}"><b>기본 모드</b><span>날짜·구역·인원·결제 수단을 직접 골라요</span></button>
+    <button type="button" class="mode${EASY ? ' on' : ''}" data-act="mode" data-id="easy" aria-pressed="${EASY}"><b>쉬운 모드</b><span>응원석·3명·카드 결제로 정해져 있어요</span></button>
+  </div>
+  <div class="phead"><h2>경기 선택</h2><p>예매할 경기의 포스터를 선택한 뒤 아래 [다음] 버튼을 누르세요.</p></div>
   <div class="matches">${MATCHES.map(m => {
     const on = S.matchId === m.id;
     return `<button type="button" class="match${on ? ' on' : ''}" data-act="match" data-id="${m.id}" aria-pressed="${on}">
@@ -536,9 +562,9 @@ function step2() {
     cells += avail ? `<button type="button" class="${cls}" data-act="date" data-id="${iso}" aria-label="${Mo + 1}월 ${d}일 예매 가능">${d}</button>`
                    : `<button type="button" class="${cls}" disabled>${d}</button>`;
   }
-  return `<div class="phead"><h2>날짜 선택</h2><p>관람할 날짜를 선택하세요. 빨간 테두리가 있는 날짜에 경기가 있습니다.</p></div>
-  <div class="date-grid">
-    <div class="cal">
+  return `<div class="phead"><h2>날짜 선택</h2><p>${EASY ? '관람할 경기 날짜를 눌러 주세요.' : '관람할 날짜를 선택하세요. 빨간 테두리가 있는 날짜에 경기가 있습니다.'}</p></div>
+  <div class="date-grid${EASY ? ' easy' : ''}">
+    <div class="cal"${EASY ? ' hidden' : ''}>
       <div class="cal-head"><button type="button" disabled aria-label="이전 달">‹</button><b>${Y}. ${pad(Mo + 1)}</b><button type="button" disabled aria-label="다음 달">›</button></div>
       <div class="cal-days">${cells}</div>
       <div class="cal-note"><i></i>예매 가능한 경기일</div>
@@ -558,16 +584,18 @@ function step2() {
   </div>`;
 }
 
+const zoneOpen = z => !EASY || z.id === EASY_ZONE;
 function stadiumSvg(m) {
-  const shapes = m.zones.map(z => z.shapes.map(d =>
-    `<path d="${d}" class="zshape${S.zoneId === z.id ? ' on' : ''}" style="--zc:${z.color}" data-act="zone" data-id="${z.id}"><title>${z.name} ${won(z.price)}</title></path>`).join('')).join('');
+  const shapes = m.zones.map(z => z.shapes.map(d => zoneOpen(z)
+    ? `<path d="${d}" class="zshape${S.zoneId === z.id ? ' on' : ''}" style="--zc:${z.color}" data-act="zone" data-id="${z.id}"><title>${z.name} ${won(z.price)}</title></path>`
+    : `<path d="${d}" class="zshape off"></path>`).join('')).join('');
   const labels = m.zones.map(z => `<text class="zlabel" x="${z.l[0]}" y="${z.l[1]}">${z.short}</text>`).join('');
   return `<svg viewBox="${m.map.vb}" role="img" aria-label="${m.venue} 좌석 배치도">${m.map.base}${shapes}${labels}</svg>`;
 }
 
 function step3() {
   const m = M(), z = Z();
-  const zones = m.zones.map(x => `<button type="button" class="zone${S.zoneId === x.id ? ' on' : ''}" data-act="zone" data-id="${x.id}" style="--zc:${x.color}">
+  const zones = m.zones.filter(zoneOpen).map(x => `<button type="button" class="zone${S.zoneId === x.id ? ' on' : ''}" data-act="zone" data-id="${x.id}" style="--zc:${x.color}">
       <span class="zdot"></span><span class="zname">${x.flag ? flagSvg(x.flag) : ''}${x.name}<small>${x.grade}석</small></span><span class="zprice">${won(x.price)}</span>
       <span class="zleft">잔여 ${freeCount(m, S.date, x.id)}석 · ${x.gate}번 게이트</span></button>`).join('');
   return `<div class="phead"><h2>좌석 선택</h2><p>경기장 그림이나 구역 목록에서 원하는 구역을 선택하세요.</p></div>
@@ -576,9 +604,9 @@ function step3() {
 
 function step4() {
   const t = TYPES[0], sel = S.counts[t.id];
-  const boxes = Array.from({ length: MAX }, (_, i) => i + 1).map(n =>
+  const boxes = (EASY ? [EASY_PEOPLE] : Array.from({ length: MAX }, (_, i) => i + 1)).map(n =>
     `<button type="button" class="pbox${sel === n ? ' on' : ''}" data-act="people" data-id="${n}" aria-pressed="${sel === n}"><b>${n}</b><span>명</span></button>`).join('');
-  return `<div class="phead"><h2>인원 선택</h2><p>관람할 인원 수를 눌러 주세요. 한 번에 최대 ${MAX}명까지 예매할 수 있습니다.</p></div>
+  return `<div class="phead"><h2>인원 선택</h2><p>${EASY ? `관람 인원 ${EASY_PEOPLE}명을 눌러 주세요.` : `관람할 인원 수를 눌러 주세요. 한 번에 최대 ${MAX}명까지 예매할 수 있습니다.`}</p></div>
   <div class="count-info"><span>${Z().name} · ${t.name} 1명 <strong>${won(priceOf(t))}</strong></span>
     <span>${sel ? `<strong>${sel}명</strong> 선택 · 티켓 금액 <strong>${won(ticketSum())}</strong>` : '아직 선택하지 않았어요'}</span></div>
   <div class="pboxes">${boxes}</div>
@@ -600,7 +628,7 @@ function step5() {
   <div class="pay-grid">
     <section>
       <p class="sec-title">결제 수단</p>
-      <div class="methods">${[['card', '신용·체크카드'], ['bank', '무통장입금'], ['phone', '휴대폰 결제'], ['easy', '간편결제']].map(([v, l]) =>
+      <div class="methods">${[['card', '신용·체크카드'], ['bank', '무통장입금'], ['phone', '휴대폰 결제'], ['easy', '간편결제']].filter(([v]) => !EASY || v === 'card').map(([v, l]) =>
         `<label class="method"><input type="radio" name="pay" value="${v}" id="pay-${v}"${p.method === v ? ' checked' : ''}><span>${l}${PAY_ICONS[v]}</span></label>`).join('')}</div>
       ${sub}
     </section>
@@ -613,7 +641,7 @@ function step5() {
         <tr><td>경기 전날 17:00 이후</td><td>취소 불가</td></tr>
       </table></div>
       <p class="mmeta" style="margin:8px 0 0">이 경기의 취소 마감: <b class="num">${fmtDate(`${deadline.getFullYear()}-${pad(deadline.getMonth() + 1)}-${pad(deadline.getDate())}`)} 17:00</b></p>
-      <div class="agree">
+      <div class="agree"${EASY ? ' hidden' : ''}>
         <label class="all"><input type="checkbox" id="agreeAll"${S.agree.cancel && S.agree.privacy ? ' checked' : ''}> 아래 내용에 모두 동의합니다</label>
         <label><input type="checkbox" id="agreeCancel"${S.agree.cancel ? ' checked' : ''}> [필수] 취소 수수료와 취소 기한을 확인했습니다</label>
         <label><input type="checkbox" id="agreePrivacy"${S.agree.privacy ? ' checked' : ''}> [필수] 개인정보 수집 및 제3자 제공에 동의합니다</label>
@@ -640,7 +668,7 @@ function fitText(g, text, maxW, size, family, weight = '400') {
   let s = size;
   do { g.font = `${weight} ${s}px ${family}`; s -= 2; } while (g.measureText(text).width > maxW && s > 20);
 }
-async function drawPrintTicket() {
+async function drawPrintTicket(idx = 0) {
   try { await Promise.all(['400 80px "Black Han Sans"', '700 40px "Noto Sans KR"', '400 28px "Noto Sans KR"'].map(f => document.fonts.load(f))); } catch (e) {}
   const m = M(), z = Z(), d = D(), n = cntSum();
   const DISP = '"Black Han Sans", "Malgun Gothic", sans-serif', BODY = '"Noto Sans KR", "Malgun Gothic", sans-serif';
@@ -661,7 +689,7 @@ async function drawPrintTicket() {
   g.fillStyle = m.home.color; g.fillRect(0, PH, W, 90);
   g.fillStyle = '#ffffff'; g.textBaseline = 'middle';
   g.font = `700 34px ${BODY}`; g.textAlign = 'left'; g.fillText(`${m.league} · ${d.label}`, PAD, PH + 45);
-  g.textAlign = 'right'; g.fillText('ENTRY TICKET', W - PAD, PH + 45);
+  g.textAlign = 'right'; g.fillText(`ENTRY TICKET ${idx + 1}/${n}`, W - PAD, PH + 45);
 
   // 팀 이름
   g.textAlign = 'left'; g.fillStyle = '#18171d';
@@ -669,7 +697,7 @@ async function drawPrintTicket() {
   g.fillText(`${m.home.name} vs ${m.away.name}`, PAD, PH + 175);
 
   // 정보 표
-  const rows = [['일시', `${fmtDate(d.d)} ${d.t}`], ['장소', m.venue], ['구역', z.name], ['등급', `${z.grade}석`], ['인원', `${TYPES[0].name} ${n}명`], ['결제금액', won(total())]];
+  const rows = [['일시', `${fmtDate(d.d)} ${d.t}`], ['장소', m.venue], ['구역', z.name], ['등급', `${z.grade}석`], ['권종', `${TYPES[0].name} 1명 (${idx + 1}/${n}매)`], ['가격', won(priceOf(TYPES[0]))]];
   const colX = [PAD, W / 2 + 20], top = PH + 270, rowH = 125;
   rows.forEach(([k, v], i) => {
     const x = colX[i % 2], y = top + Math.floor(i / 2) * rowH;
@@ -687,11 +715,12 @@ async function drawPrintTicket() {
   g.fillStyle = '#696676'; g.font = `700 28px ${BODY}`; g.fillText('입장 게이트', PAD, cut + 75);
   g.fillStyle = '#18171d'; g.font = `400 96px ${DISP}`; g.fillText(`GATE ${z.gate}`, PAD, cut + 160);
   const bx = 560, bw = W - PAD - bx, by = cut + 50, bh = 140;
-  let seed = hash(S.bookingNo), x = 0; const bars = [];
+  const no = `${S.bookingNo}-${pad(idx + 1)}`;
+  let seed = hash(S.bookingNo + idx), x = 0; const bars = [];
   for (let i = 0; i < 70; i++) { seed = Math.imul(seed ^ (seed >>> 15), 2246822507) >>> 0; const w = 1 + (seed % 3); if (i % 2 === 0) bars.push([x, w]); x += w; }
   const k = bw / x; g.fillStyle = '#18171d';
   bars.forEach(([bx0, w]) => g.fillRect(bx + bx0 * k, by, w * k, bh));
-  g.font = `700 30px ${BODY}`; g.textAlign = 'center'; g.fillText(S.bookingNo, bx + bw / 2, by + bh + 40);
+  g.font = `700 30px ${BODY}`; g.textAlign = 'center'; g.fillText(no, bx + bw / 2, by + bh + 40);
 
   // 실습용 표시
   const label = '실습용 · 입장 불가'; g.font = `700 30px ${BODY}`;
@@ -704,35 +733,37 @@ async function drawPrintTicket() {
 /* 바로 출력: 티켓 이미지를 미리 만들어 두었다가 인쇄 창(window.print)을 연다 */
 let printCache = null;
 function preparePrint() {
-  printCache = drawPrintTicket().then(c => new Promise(res => c.toBlob(blob => res({ url: c.toDataURL('image/png'), blob }), 'image/png')));
+  // 인원 수만큼 한 장씩 (1명 = 엽서 1장)
+  const one = i => drawPrintTicket(i).then(c => new Promise(res => c.toBlob(blob => res({ url: c.toDataURL('image/png'), blob }), 'image/png')));
+  printCache = Promise.all(Array.from({ length: cntSum() }, (_, i) => one(i)));
   printCache.catch(() => {});
 }
 
 async function printTicket() {
   if (!printCache) preparePrint();
-  let p;
-  try { p = await printCache; }
+  let list;
+  try { list = await printCache; }
   catch (e) { modal(`<h3>출력용 티켓을 만들지 못했습니다</h3><p>페이지를 새로 고친 뒤 다시 시도하세요.</p><button type="button" class="btn" data-act="closemodal">닫기</button>`); return; }
   const area = $('printArea');
-  area.innerHTML = `<img src="${p.url}" alt="">`;
-  try { await area.querySelector('img').decode(); } catch (e) {}
+  area.innerHTML = list.map(p => `<img src="${p.url}" alt="">`).join('');
+  try { await Promise.all([...area.querySelectorAll('img')].map(i => i.decode())); } catch (e) {}
   window.print();
-  modal(`<h3>티켓 출력</h3>
-    <img class="print-prev" src="${p.url}" alt="출력용 티켓 미리보기">
-    <p>인쇄 화면에서 프린터는 <b>Canon SELPHY CP1300</b>, 용지는 <b>엽서(100×148mm)</b>를 고르세요.</p>
+  modal(`<h3>티켓 출력 · ${list.length}장</h3>
+    <div class="print-list">${list.map((p, i) => `<img class="print-prev" src="${p.url}" alt="출력용 티켓 ${i + 1}">`).join('')}</div>
+    <p>인원 수만큼 <b>${list.length}장</b>이 한 장씩 출력됩니다. 인쇄 화면에서 프린터는 <b>Canon SELPHY CP1300</b>, 용지는 <b>엽서(100×148mm)</b>를 고르세요.</p>
     <p class="tap-note">인쇄 화면이 열리지 않거나 프린터가 목록에 없으면 [Canon PRINT로 보내기]를 누르세요.</p>
     <div class="cp-actions" style="justify-content:center;flex-wrap:wrap">
       <button type="button" class="btn" data-act="closemodal">닫기</button>
       <button type="button" class="btn" data-act="shareticket">Canon PRINT로 보내기</button>
       <button type="button" class="btn primary" data-act="printticket">다시 출력</button>
-    </div>`);
+    </div>`, true);
 }
 
 async function shareTicket() {
-  const p = await printCache;
-  const file = new File([p.blob], `ticket-${S.bookingNo}.png`, { type: 'image/png' });
-  if (!(navigator.canShare && navigator.canShare({ files: [file] }))) { toast('이 기기에서는 앱으로 보내기를 쓸 수 없습니다.'); return; }
-  try { await navigator.share({ files: [file], title: '예매 티켓' }); }
+  const list = await printCache;
+  const files = list.map((p, i) => new File([p.blob], `ticket-${S.bookingNo}-${pad(i + 1)}.png`, { type: 'image/png' }));
+  if (!(navigator.canShare && navigator.canShare({ files }))) { toast('이 기기에서는 앱으로 보내기를 쓸 수 없습니다.'); return; }
+  try { await navigator.share({ files, title: '예매 티켓' }); }
   catch (e) { if (e.name !== 'AbortError') toast('앱으로 보내지 못했습니다. 다시 시도하세요.'); }
 }
 
@@ -808,6 +839,7 @@ function valid(step) {
   return true;
 }
 function payProblem() {
+  if (EASY) return '';
   if (!S.agree.cancel || !S.agree.privacy) return '필수 약관에 모두 동의해야 결제할 수 있습니다.';
   return '';
 }
@@ -833,6 +865,7 @@ function renderStepper() {
   }).join('');
 }
 function render() {
+  $('modeChip').textContent = EASY ? '실습용 · 쉬운 모드' : '실습용';
   renderStepper();
   $('main').innerHTML = [null, step1, step2, step3, step4, step5, step6][S.step]();
   $('layout').classList.toggle('full', S.step === 6);
@@ -892,6 +925,7 @@ function renderCardPay() {
     <div class="cp-body">
       <div class="cp-fields">
         ${cpFieldHtml(num)}
+        ${EASY ? `<div class="cp-example"><span>보기</span><b class="num">${cpShow(num, CARD.number)}</b></div>` : ''}
         <div class="cp-err" role="alert">${cp.err}</div>
       </div>
       <div class="keypad" aria-label="숫자 키패드">${keys}
@@ -987,6 +1021,7 @@ document.addEventListener('click', e => {
     case 'printticket': printTicket(); break;
     case 'shareticket': shareTicket(); break;
     case 'closemodal': modal(''); break;
+    case 'mode': { const e = id === 'easy'; if (e !== EASY) { EASY = e; S = fresh(); printCache = null; render(); } break; }
     case 'restart': payState = null; cp = null; printCache = null; S = fresh(); modal(''); render(); window.scrollTo(0, 0); break;
   }
 });
