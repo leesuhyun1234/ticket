@@ -90,9 +90,11 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 @media (max-width: 560px) { .panel { padding: 18px 14px; } }
 .boot { display: grid; gap: 8px; padding: 40px 8px; text-align: center; color: var(--muted); }
 .boot h2 { color: var(--fg); font-size: 20px; }
-.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 22px; }
-.mode { display: grid; gap: 2px; text-align: left; padding: 14px 18px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); }
-.mode b { font-size: 18px; }
+.s1-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px 20px; margin-bottom: 18px; }
+.s1-head .phead { margin-bottom: 0; min-width: 0; flex: 1 1 280px; }
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex: 0 1 340px; }
+.mode { display: grid; gap: 0; text-align: left; padding: 8px 14px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); }
+.mode b { font-size: 16px; }
 .mode span { font-size: 13px; color: var(--muted); }
 .mode.on { border-color: var(--accent); background: var(--accent-soft); }
 .mode.on b { color: var(--accent); }
@@ -303,13 +305,25 @@ dl { margin: 0; }
 .cp-value .ph { color: var(--seat-line); }
 .cp-value .caret { display: inline-block; width: 2px; height: 26px; background: var(--accent); vertical-align: -4px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
 .cp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.cp-example { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 2px dashed var(--seat-line); border-radius: 10px; background: var(--surface-2); }
-.cp-example span { flex: none; font-size: 13px; font-weight: 700; color: var(--accent-ink); background: var(--accent); border-radius: 4px; padding: 2px 8px; }
-.cp-example b { font-size: 26px; letter-spacing: .06em; white-space: nowrap; }
+.cp-example { display: flex; align-items: center; justify-content: center; width: 100%; padding: 16px 14px; border: 2px dashed var(--seat-line); border-radius: 10px; background: var(--surface-2); }
+.cp-example:hover { border-color: var(--accent); }
+.cp-example:active { background: var(--accent-soft); }
+.cp-example b { font-size: 30px; letter-spacing: .06em; white-space: nowrap; }
+.cp-body.easy { grid-template-columns: minmax(0, 1fr); }
+.btn.cp-big { width: 100%; height: 72px; font-size: 22px; }
 .zshape.off { fill: var(--seat-sold); opacity: .7; cursor: default; }
 .zshape.off:hover { opacity: .7; }
 .date-grid.easy { grid-template-columns: minmax(0, 520px); }
-.date-grid.easy .round { padding: 20px 22px; }
+.date-grid.easy .round { padding: 20px 22px; background: var(--accent-soft); border-color: var(--accent); }
+.date-grid.easy .round.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); box-shadow: 0 6px 18px rgb(232 52 58 / .35); }
+.date-grid.easy .round.on .rs, .date-grid.easy .round.on .rl { color: var(--accent-ink); }
+.pn { display: flex; align-items: baseline; gap: 4px; }
+.pboxes.easy { grid-template-columns: minmax(0, 320px); }
+.pboxes.easy .pbox { flex-direction: column; align-items: center; aspect-ratio: auto; max-height: none; padding: 24px 16px; gap: 14px; background: var(--accent-soft); border-color: var(--accent); }
+.pboxes.easy .pbox.on { background: var(--accent); color: var(--accent-ink); box-shadow: 0 6px 18px rgb(232 52 58 / .35); }
+.pp { display: flex; gap: 10px; }
+.pp svg { width: 40px; height: 54px; fill: var(--accent); }
+.pbox.on .pp svg { fill: var(--accent-ink); }
 .cp-err { min-height: 20px; font-size: 14px; font-weight: 700; color: var(--accent); }
 .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .keypad button { height: 60px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -334,9 +348,14 @@ dl { margin: 0; }
   .toast { bottom: 100px; }
   .btn { height: 56px; font-size: 17px; padding: 0 28px; }
   .btn.primary { min-width: 180px; }
-  .match { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
-  .match > .poster, .match > .poster-wrap { width: calc(min(52vh, 440px) * 2 / 3); width: calc(min(52dvh, 440px) * 2 / 3); }
-  .match .minfo { padding-top: 4px; }
+  .match { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 12px; }
+  .match { padding: 10px; }
+  .match > .poster, .match > .poster-wrap { width: calc(min(100vh - 495px, 400px) * 2 / 3); width: calc(min(100dvh - 495px, 400px) * 2 / 3); min-width: 150px; }
+  .match .extra { display: none; }
+  .match .minfo { gap: 2px; }
+  .match .minfo { justify-items: center; }
+  .match .chips { justify-content: center; }
+  .match .mtitle { font-size: 19px; }
   .pay-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
   .pay-grid > section:first-child { grid-row: span 2; }
   .zone { padding-block: 14px; }
@@ -415,7 +434,7 @@ const STEPS = ['경기 선택', '날짜 선택', '좌석 선택', '인원 선택
 // 쉬운 버전(easy.html)은 이 값을 true로 바꿔서 만든다
 let EASY = false;
 try { if (location.hash === '#easy') EASY = true; } catch (e) {}
-const EASY_ZONE = 'first', EASY_PEOPLE = 3; // 쉬운 버전: 홈 응원석(1루)만, 3명만
+const EASY_PEOPLE = 3; // 쉬운 버전: 3명만
 const MAX = 5, FEE = 1000;
 const ROWS = 'ABCDEFGH'.split(''), COLS = 12;
 const WD = ['일', '월', '화', '수', '목', '금', '토'];
@@ -518,6 +537,9 @@ function flagSvg(code) {
     <g fill="#000">${tri(10.1, 6.7, -56.31, [0, 0, 0])}${tri(25.9, 17.3, -56.31, [1, 1, 1])}${tri(25.9, 6.7, 56.31, [1, 0, 1])}${tri(10.1, 17.3, 56.31, [0, 1, 0])}</g></svg>`;
 }
 
+/* 쉬운 모드 인원 상자의 사람 그림 */
+const PERSON = `<svg viewBox="0 0 24 32" aria-hidden="true"><circle cx="12" cy="7" r="6"/><path d="M1 31 C1 20 5 15 12 15 C19 15 23 20 23 31 Z"/></svg>`;
+
 /* 결제 수단 그림 */
 const PAY_ICONS = {
   card: `<svg class="micon" viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="4"/><path d="M5 19 H43" stroke-width="5"/><rect class="fillc" x="10" y="25" width="9" height="7" rx="1.5"/><path d="M25 31 H37"/></svg>`,
@@ -528,11 +550,13 @@ const PAY_ICONS = {
 
 /* 단계별 화면 */
 function step1() {
-  return `<div class="modes" role="group" aria-label="난이도">
-    <button type="button" class="mode${EASY ? '' : ' on'}" data-act="mode" data-id="normal" aria-pressed="${!EASY}"><b>기본 모드</b><span>날짜·구역·인원·결제 수단을 직접 골라요</span></button>
-    <button type="button" class="mode${EASY ? ' on' : ''}" data-act="mode" data-id="easy" aria-pressed="${EASY}"><b>쉬운 모드</b><span>응원석·3명·카드 결제로 정해져 있어요</span></button>
+  return `<div class="s1-head">
+    <div class="phead"><h2>경기 선택</h2><p>예매할 경기의 포스터를 선택한 뒤 아래 [다음] 버튼을 누르세요.</p></div>
+    <div class="modes" role="group" aria-label="난이도">
+      <button type="button" class="mode${EASY ? '' : ' on'}" data-act="mode" data-id="normal" aria-pressed="${!EASY}"><b>기본 모드</b><span>직접 골라요</span></button>
+      <button type="button" class="mode${EASY ? ' on' : ''}" data-act="mode" data-id="easy" aria-pressed="${EASY}"><b>쉬운 모드</b><span>3명·카드 결제</span></button>
+    </div>
   </div>
-  <div class="phead"><h2>경기 선택</h2><p>예매할 경기의 포스터를 선택한 뒤 아래 [다음] 버튼을 누르세요.</p></div>
   <div class="matches">${MATCHES.map(m => {
     const on = S.matchId === m.id;
     return `<button type="button" class="match${on ? ' on' : ''}" data-act="match" data-id="${m.id}" aria-pressed="${on}">
@@ -540,9 +564,9 @@ function step1() {
       <span class="minfo">
         <span class="chips"><span class="chip">${m.sport}</span><span class="chip hot">예매중</span></span>
         <span class="mtitle">${m.home.name} vs ${m.away.name}</span>
-        <span class="mmeta">${m.league} ${m.tag}</span>
-        <span class="mmeta num">${m.dates.map(x => `${fmtDate(x.d)} ${x.t}`).join(', ')}</span>
-        <span class="mmeta">${m.venue} · ${m.rating} · ${m.runtime}</span>
+        <span class="mmeta extra">${m.league} ${m.tag}</span>
+        <span class="mmeta num">${m.dates.map(x => `${fmtDate(x.d)} ${x.t}`).join(', ')} · ${m.venue}</span>
+        <span class="mmeta extra">${m.rating} · ${m.runtime}</span>
       </span>
       <span class="check" aria-hidden="true">✓</span>
     </button>`;
@@ -584,7 +608,7 @@ function step2() {
   </div>`;
 }
 
-const zoneOpen = z => !EASY || z.id === EASY_ZONE;
+const zoneOpen = () => true; // 좌석 구역은 두 모드 모두 같다
 function stadiumSvg(m) {
   const shapes = m.zones.map(z => z.shapes.map(d => zoneOpen(z)
     ? `<path d="${d}" class="zshape${S.zoneId === z.id ? ' on' : ''}" style="--zc:${z.color}" data-act="zone" data-id="${z.id}"><title>${z.name} ${won(z.price)}</title></path>`
@@ -605,11 +629,11 @@ function step3() {
 function step4() {
   const t = TYPES[0], sel = S.counts[t.id];
   const boxes = (EASY ? [EASY_PEOPLE] : Array.from({ length: MAX }, (_, i) => i + 1)).map(n =>
-    `<button type="button" class="pbox${sel === n ? ' on' : ''}" data-act="people" data-id="${n}" aria-pressed="${sel === n}"><b>${n}</b><span>명</span></button>`).join('');
+    `<button type="button" class="pbox${sel === n ? ' on' : ''}" data-act="people" data-id="${n}" aria-pressed="${sel === n}">${EASY ? `<span class="pp">${PERSON.repeat(n)}</span>` : ''}<span class="pn"><b>${n}</b><span>명</span></span></button>`).join('');
   return `<div class="phead"><h2>인원 선택</h2><p>${EASY ? `관람 인원 ${EASY_PEOPLE}명을 눌러 주세요.` : `관람할 인원 수를 눌러 주세요. 한 번에 최대 ${MAX}명까지 예매할 수 있습니다.`}</p></div>
   <div class="count-info"><span>${Z().name} · ${t.name} 1명 <strong>${won(priceOf(t))}</strong></span>
     <span>${sel ? `<strong>${sel}명</strong> 선택 · 티켓 금액 <strong>${won(ticketSum())}</strong>` : '아직 선택하지 않았어요'}</span></div>
-  <div class="pboxes">${boxes}</div>
+  <div class="pboxes${EASY ? ' easy' : ''}">${boxes}</div>
   <ul class="notice">
     <li>예매수수료는 1매당 ${won(FEE)}이 추가됩니다.</li>
   </ul>`;
@@ -921,20 +945,22 @@ function renderCardPay() {
   const [num] = CP_FIELDS;
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => `<button type="button" data-act="cpkey" data-k="${k}">${k}</button>`).join('');
   modal(`<div class="cp-head"><h3>카드 정보 입력</h3><span class="cp-amount">${won(total())}</span></div>
-    <p class="cp-warn">실습용 결제입니다. 실제 카드 정보는 입력하지 마세요. 나눠 준 실습 카드의 카드번호 16자리를 입력하세요.</p>
-    <div class="cp-body">
+    <p class="cp-warn">${EASY ? '아래 카드번호를 누르면 자동으로 입력됩니다. 그다음 [결제 요청]을 누르세요.' : '실습용 결제입니다. 실제 카드 정보는 입력하지 마세요. 나눠 준 실습 카드의 카드번호 16자리를 입력하세요.'}</p>
+    <div class="cp-body${EASY ? ' easy' : ''}">
       <div class="cp-fields">
         ${cpFieldHtml(num)}
-        ${EASY ? `<div class="cp-example"><span>보기</span><b class="num">${cpShow(num, CARD.number)}</b></div>` : ''}
+        ${EASY ? `<button type="button" class="cp-example" data-act="cpfill" aria-label="카드번호 자동 입력"><b class="num">${cpShow(num, CARD.number)}</b></button>` : ''}
         <div class="cp-err" role="alert">${cp.err}</div>
       </div>
-      <div class="keypad" aria-label="숫자 키패드">${keys}
+      <div class="keypad" aria-label="숫자 키패드"${EASY ? ' hidden' : ''}>${keys}
         <button type="button" class="fn" data-act="cpkey" data-k="clear">전체 지움</button>
         <button type="button" data-act="cpkey" data-k="0">0</button>
         <button type="button" class="fn" data-act="cpkey" data-k="back" aria-label="한 글자 지우기">← 지움</button>
       </div>
     </div>
-    <div class="cp-actions"><button type="button" class="btn" data-act="paycancel">결제 취소</button><button type="button" class="btn primary" data-act="cpsubmit">결제 요청</button></div>`, true);
+    ${EASY
+      ? `<button type="button" class="btn primary cp-big" data-act="cpsubmit">결제 요청</button>`
+      : `<div class="cp-actions"><button type="button" class="btn" data-act="paycancel">결제 취소</button><button type="button" class="btn primary" data-act="cpsubmit">결제 요청</button></div>`}`, true);
 }
 
 function cpKey(k) {
@@ -1015,6 +1041,7 @@ document.addEventListener('click', e => {
       break;
     case 'cpfield': if (payState === 'card') { cp.active = id; renderCardPay(); } break;
     case 'cpkey': cpKey(el.dataset.k); break;
+    case 'cpfill': if (payState === 'card') { cp.number = CARD.number; cp.err = ''; cp.bad = null; renderCardPay(); } break;
     case 'cpsubmit': if (payState === 'card') cpSubmit(); break;
     case 'paycancel': payState = null; cp = null; modal(''); toast('결제를 취소했습니다.'); break;
     case 'showtickets': payState = null; modal(''); go(6); break;
