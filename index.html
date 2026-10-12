@@ -110,6 +110,12 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 
 /* Posters (사용자 제공 이미지) */
 .poster { display: block; width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; max-width: 100%; border-radius: 6px; background: var(--surface-2); }
+.poster-wrap { position: relative; display: block; container-type: inline-size; }
+.poster-fix { position: absolute; display: flex; align-items: center; justify-content: center; gap: 2.6cqi; color: #f2f5fb; font-family: var(--font-display); line-height: 1; white-space: nowrap;
+  background: radial-gradient(ellipse at center, #0a1530 0%, #060c1d 70%); border-radius: 1cqi; box-shadow: 0 0 1.4cqi 1cqi #060c1d; }
+.poster-fix b { font-weight: 400; font-size: 8.4cqi; font-style: italic; letter-spacing: -.02em; text-shadow: 0 .3cqi .6cqi rgb(0 0 0 / .6); }
+.poster-fix small { font-size: 4.6cqi; font-weight: 400; }
+.poster-fix .hl { color: #2f8bff; text-shadow: 0 0 1.4cqi rgb(47 139 255 / .6); }
 
 /* Step 2: calendar */
 .date-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; }
@@ -158,6 +164,7 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 .zone.on { border-color: var(--zc); background: var(--surface-2); box-shadow: inset 4px 0 0 var(--zc); }
 .zdot { grid-row: span 2; width: 14px; height: 14px; border-radius: 3px; background: var(--zc); }
 .zname { font-weight: 700; }
+.flag { width: 24px; height: 16px; vertical-align: -3px; margin-right: 6px; border-radius: 2px; box-shadow: 0 0 0 1px var(--line); }
 .zname small { font-weight: 500; color: var(--muted); margin-left: 6px; font-size: 12px; }
 .zprice { font-weight: 700; font-variant-numeric: tabular-nums; }
 .zleft { grid-column: 2 / 4; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -176,6 +183,14 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 .stepperbox button:disabled { opacity: .35; cursor: default; }
 .stepperbox output { width: 40px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
 @media (max-width: 480px) { .type { grid-template-columns: minmax(0, 1fr) auto; } .type .tp { grid-column: 1; grid-row: 2; font-size: 13px; } .type .stepperbox { grid-row: span 2; } }
+.pboxes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 480px) { .pboxes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.pbox { display: flex; align-items: baseline; justify-content: center; gap: 4px; aspect-ratio: 1; max-height: 150px; width: 100%; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); align-content: center; flex-wrap: wrap; }
+.pbox b { font-family: var(--font-display); font-weight: 400; font-size: 48px; line-height: 1; font-variant-numeric: tabular-nums; }
+.pbox span { font-size: 18px; font-weight: 700; color: var(--muted); }
+.pbox:hover { border-color: var(--seat-line); }
+.pbox.on { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.pbox.on span { color: var(--accent-ink); }
 .notice { margin-top: 18px; font-size: 13px; color: var(--muted); display: grid; gap: 4px; padding-left: 18px; }
 
 /* Step 5: payment */
@@ -191,7 +206,11 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 @media (max-width: 560px) { .methods { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .method { position: relative; }
 .method input { position: absolute; opacity: 0; pointer-events: none; }
-.method span { display: grid; place-items: center; text-align: center; height: 52px; border: 1.5px solid var(--line); border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; background: var(--surface); }
+.method span { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; min-height: 112px; padding: 12px 6px; border: 1.5px solid var(--line); border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; background: var(--surface); }
+.micon { width: 48px; height: 48px; fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.micon .fillc { fill: var(--muted); stroke: none; }
+.method input:checked + span .micon { stroke: var(--accent); }
+.method input:checked + span .micon .fillc { fill: var(--accent); }
 .method input:checked + span { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 .method input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 .sub-opts { margin-top: 14px; }
@@ -242,23 +261,69 @@ dl { margin: 0; }
 .spinner { width: 44px; height: 44px; border-radius: 50%; border: 4px solid var(--accent-soft); border-top-color: var(--accent); animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .modal-card .okmark { width: 56px; height: 56px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; font-size: 28px; font-weight: 900; }
-.tap { width: min(240px, 100%); border: 0; background: none; padding: 0; cursor: default; }
-.tap.clickable { cursor: pointer; }
-.tap svg { display: block; width: 100%; height: auto; }
-.tap-tablet { fill: var(--fg); }
-.tap-screen { fill: var(--surface-2); }
-.tap-waves path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; animation: wave 1.4s ease-out infinite; opacity: 0; }
-.tap-waves path:nth-child(2) { animation-delay: .2s; } .tap-waves path:nth-child(3) { animation-delay: .4s; }
-.tap-card { fill: var(--accent); }
-.tap-chip { fill: #f2c14e; }
-.tap-nfc { fill: none; stroke: #fff; stroke-width: 2.5; }
-.tap-strip { fill: rgb(255 255 255 / .6); }
-.tap-cardg { animation: cardTap 1.8s ease-in-out infinite; }
-.tap.clickable .tap-card { stroke: var(--fg); stroke-width: 2; stroke-dasharray: 5 4; }
+#printArea { display: none; }
+@media print {
+  @page { size: 100mm 148mm; margin: 0; }
+  html, body { height: auto !important; overflow: visible !important; background: #fff !important; }
+  :root { padding: 0 !important; }
+  body > * { display: none !important; }
+  body > #printArea { display: block !important; }
+  #printArea img { display: block; width: 100mm; height: 148mm; max-width: none; }
+}
+.print-prev { display: block; width: auto; max-width: 100%; max-height: 58dvh; margin: 0 auto; border-radius: 6px; box-shadow: 0 0 0 1px var(--line), var(--shadow); }
+.btn.dl { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .tap-note { font-size: 13px !important; }
-@keyframes wave { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
-@keyframes cardTap { 0%, 100% { transform: translateX(0); } 45%, 60% { transform: translateX(40px); } }
-@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } .match { transition: none; } .tap-cardg, .tap-waves path { animation: none; opacity: 1; } }
+
+/* 카드 정보 입력 (실습용 키패드) */
+.modal-card.wide { width: min(860px, 100%); text-align: left; justify-items: stretch; padding: 24px; gap: 16px; max-height: calc(100dvh - 32px); overflow: auto; }
+.cp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.cp-head h3 { font-size: 20px; }
+.cp-amount { font-size: 18px; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; }
+.cp-warn { font-size: 13px; color: var(--muted); background: var(--surface-2); border-radius: 8px; padding: 8px 12px; }
+.cp-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: start; }
+@media (max-width: 640px) { .cp-body { grid-template-columns: minmax(0, 1fr); } }
+.cp-fields { display: grid; gap: 12px; }
+.cp-field { display: grid; gap: 6px; text-align: left; border: 2px solid var(--line); border-radius: 10px; padding: 10px 14px; background: var(--surface); }
+.cp-field.on { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.cp-field.bad { border-color: var(--accent); background: var(--accent-soft); }
+.cp-label { font-size: 13px; font-weight: 700; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.cp-label em { font-style: normal; font-weight: 500; }
+.cp-value { font-size: 28px; font-weight: 700; letter-spacing: .06em; min-height: 36px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; }
+.cp-value .ph { color: var(--seat-line); }
+.cp-value .caret { display: inline-block; width: 2px; height: 26px; background: var(--accent); vertical-align: -4px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+.cp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cp-err { min-height: 20px; font-size: 14px; font-weight: 700; color: var(--accent); }
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.keypad button { height: 60px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.keypad button:active { background: var(--line); }
+.keypad .fn { font-size: 15px; }
+.cp-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.cp-actions .btn { height: 56px; font-size: 17px; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } .match { transition: none; } .cp-value .caret { animation: none; } }
+
+/* 갤럭시 탭 S6 가로(약 1280×800) 등 넓은 가로 화면: 한 화면에 고정되는 앱 형태 */
+@media (min-width: 1000px) and (orientation: landscape) {
+  html, body { height: 100%; }
+  body { display: flex; flex-direction: column; overflow: hidden; font-size: 16px; }
+  .wrap { max-width: 1280px; padding-inline: 24px; }
+  .top .wrap { padding-block: 10px; }
+  .stepper button { padding-block: 12px; font-size: 15px; }
+  .layout { flex: 1; min-height: 0; align-items: stretch; padding-block: 16px; grid-template-columns: minmax(0, 1fr) 320px; }
+  .panel { overflow: auto; padding: 20px 24px; }
+  .aside { position: static; align-self: start; max-height: 100%; overflow: auto; }
+  .bar { position: static; }
+  .toast { bottom: 100px; }
+  .btn { height: 56px; font-size: 17px; padding: 0 28px; }
+  .btn.primary { min-width: 180px; }
+  .match { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+  .match > .poster, .match > .poster-wrap { width: calc(min(52dvh, 440px) * 2 / 3); }
+  .match .minfo { padding-top: 4px; }
+  .pay-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
+  .pay-grid > section:first-child { grid-row: span 2; }
+  .zone { padding-block: 14px; }
+  .stepperbox button { width: 48px; height: 48px; }
+}
 
 /* Step 6: tickets */
 .done-head { display: grid; gap: 6px; justify-items: center; text-align: center; padding: 8px 0 24px; }
@@ -313,17 +378,16 @@ dl { margin: 0; }
 </div>
 <div class="bar"><div class="wrap" id="bar"></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
+<div id="printArea" aria-hidden="true"></div>
 <div class="modal" id="modal" hidden><div class="modal-card" id="modalCard" role="dialog" aria-modal="true"></div></div>
 
 <script>
 const STEPS = ['경기 선택', '날짜 선택', '좌석 선택', '인원 선택', '결제', '티켓 출력'];
-const MAX = 4, FEE = 1000;
+const MAX = 5, FEE = 1000;
 const ROWS = 'ABCDEFGH'.split(''), COLS = 12;
 const WD = ['일', '월', '화', '수', '목', '금', '토'];
 const TYPES = [
-  { id: 'adult', name: '성인', note: '만 19세 이상', off: 0 },
-  { id: 'youth', name: '청소년', note: '만 13~18세 · 입장 시 신분증 확인', off: 2000 },
-  { id: 'child', name: '어린이', note: '만 4~12세 · 만 3세 이하 무료(좌석 미제공)', off: 4000 }
+  { id: 'youth', name: '청소년', off: 0 }
 ];
 
 /* 경기장 도형 */
@@ -345,12 +409,12 @@ const BB_MAP = {
     <path class="lines" d="M${BB.cx} ${BB.cy} L${pt(BB.cx, BB.cy, 175, -45)} M${BB.cx} ${BB.cy} L${pt(BB.cx, BB.cy, 175, 45)}"/>
     <rect class="base" x="${BB.cx - 4}" y="${BB.cy - 4}" width="8" height="8" transform="rotate(45 ${BB.cx} ${BB.cy})"/>`
 };
-const bbZones = (first, third, prices) => [
+const bbZones = (first, third, prices, flags = []) => [
   { id: 'table', name: '중앙 테이블석', short: '테이블석', grade: 'VIP', price: prices[0], color: '#8a55e0', gate: 1,
     shapes: [sector(BB.cx, BB.cy, 34, 78, 138, 222)], l: lab(BB.cx, BB.cy, 58, 180) },
-  { id: 'first', name: `1루 ${first} 응원석`, short: '1루 응원석', grade: 'R', price: prices[1], color: '#2f6fe0', gate: 3,
+  { id: 'first', name: `1루 ${first} 응원석`, short: '1루 응원석', grade: 'R', price: prices[1], color: '#2f6fe0', gate: 3, flag: flags[0],
     shapes: [sector(BB.cx, BB.cy, 92, 150, 54, 130)], l: lab(BB.cx, BB.cy, 121, 92) },
-  { id: 'third', name: `3루 ${third} 응원석`, short: '3루 응원석', grade: 'R', price: prices[1], color: '#e2463c', gate: 5,
+  { id: 'third', name: `3루 ${third} 응원석`, short: '3루 응원석', grade: 'R', price: prices[1], color: '#e2463c', gate: 5, flag: flags[1],
     shapes: [sector(BB.cx, BB.cy, 92, 150, -130, -54)], l: lab(BB.cx, BB.cy, 121, -92) },
   { id: 'outfield', name: '외야 일반석', short: '외야석', grade: 'S', price: prices[2], color: '#1f9e66', gate: 7,
     shapes: [sector(BB.cx, BB.cy, 184, 222, -50, 50)], l: lab(BB.cx, BB.cy, 203, 0) }
@@ -369,14 +433,16 @@ const MATCHES = [
     home: { name: '대한민국', color: '#0d2a6b' },
     away: { name: '일본', color: '#bc002d' },
     venue: '대구 삼성라이온즈파크', rating: '전체관람가', runtime: '약 180분',
-    dates: [{ d: '2026-08-15', t: '17:00', label: '한일전' }],
-    map: BB_MAP, zones: bbZones('대한민국', '일본', [60000, 30000, 18000])
+    dates: [{ d: '2026-10-25', t: '17:00', label: '한일전' }],
+    // 포스터에 인쇄된 옛 날짜(08.15 토)를 덮는 패치: [left, top, width, height] (%)
+    fix: { box: [14.4, 86, 72.4, 5.6], html: '<b>2026.10.25</b><small>일요일</small><b class="hl">17:00</b>' },
+    map: BB_MAP, zones: bbZones('대한민국', '일본', [60000, 30000, 18000], ['kr', 'jp'])
   }
 ];
 
 /* 상태 */
-const fresh = () => ({ step: 1, max: 1, matchId: null, date: null, zoneId: null, counts: { adult: 0, youth: 0, child: 0 },
-  pay: { method: 'card', cardType: '신용카드', inst: '일시불' }, agree: { cancel: false, privacy: false },
+const fresh = () => ({ step: 1, max: 1, matchId: null, date: null, zoneId: null, counts: { youth: 0 },
+  pay: { method: 'card' }, agree: { cancel: false, privacy: false },
   bookingNo: null, paidAt: null });
 let S = fresh();
 
@@ -398,8 +464,34 @@ const ticketSum = () => Z() ? TYPES.reduce((a, t) => a + S.counts[t.id] * priceO
 const total = () => ticketSum() + cntSum() * FEE;
 
 function poster(m) {
-  return `<img class="poster" src="${m.img}" alt="${m.home.name} vs ${m.away.name} 경기 포스터" width="1024" height="1536">`;
+  const img = `<img class="poster" src="${m.img}" alt="${m.home.name} vs ${m.away.name} 경기 포스터" width="1024" height="1536">`;
+  if (!m.fix) return img;
+  const [l, t, w, h] = m.fix.box;
+  return `<span class="poster-wrap">${img}<span class="poster-fix" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">${m.fix.html}</span></span>`;
 }
+
+/* 국기 (3:2) */
+function flagSvg(code) {
+  if (code === 'jp') return `<svg class="flag" viewBox="0 0 36 24" role="img" aria-label="일본 국기"><rect width="36" height="24" fill="#fff"/><circle cx="18" cy="12" r="7.2" fill="#bc002d"/></svg>`;
+  const bar = (y, broken) => broken
+    ? `<rect x="-3" y="${y - .6}" width="2.6" height="1.2"/><rect x=".4" y="${y - .6}" width="2.6" height="1.2"/>`
+    : `<rect x="-3" y="${y - .6}" width="6" height="1.2"/>`;
+  const tri = (cx, cy, rot, b) => `<g transform="translate(${cx} ${cy}) rotate(${rot})">${bar(-2, b[0])}${bar(0, b[1])}${bar(2, b[2])}</g>`;
+  return `<svg class="flag" viewBox="0 0 36 24" role="img" aria-label="대한민국 국기"><rect width="36" height="24" fill="#fff"/>
+    <g transform="rotate(33.69 18 12)">
+      <path d="M12 12 A6 6 0 0 1 24 12 A3 3 0 0 0 18 12 A3 3 0 0 1 12 12 Z" fill="#cd2e3a"/>
+      <path d="M12 12 A6 6 0 0 0 24 12 A3 3 0 0 0 18 12 A3 3 0 0 1 12 12 Z" fill="#0047a0"/>
+    </g>
+    <g fill="#000">${tri(10.1, 6.7, -56.31, [0, 0, 0])}${tri(25.9, 17.3, -56.31, [1, 1, 1])}${tri(25.9, 6.7, 56.31, [1, 0, 1])}${tri(10.1, 17.3, 56.31, [0, 1, 0])}</g></svg>`;
+}
+
+/* 결제 수단 그림 */
+const PAY_ICONS = {
+  card: `<svg class="micon" viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="4"/><path d="M5 19 H43" stroke-width="5"/><rect class="fillc" x="10" y="25" width="9" height="7" rx="1.5"/><path d="M25 31 H37"/></svg>`,
+  bank: `<svg class="micon" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 18 L24 7 L43 18 Z"/><path d="M11 21 V34 M19 21 V34 M29 21 V34 M37 21 V34"/><path d="M5 38 H43"/><circle class="fillc" cx="24" cy="14" r="2"/></svg>`,
+  phone: `<svg class="micon" viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="4" width="20" height="40" rx="4"/><path d="M21 39 H27"/><path d="M19 15 l3.5 3.5 L29 12"/><path d="M19 25 H29 M19 30 H26"/></svg>`,
+  easy: `<svg class="micon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 15 H38 a4 4 0 0 1 4 4 V36 a4 4 0 0 1 -4 4 H10 a4 4 0 0 1 -4 -4 V12 a4 4 0 0 1 4 -4 H34"/><path d="M42 23 H33 a4 4 0 0 0 0 8 H42"/><circle class="fillc" cx="34" cy="27" r="1.8"/></svg>`
+};
 
 /* 단계별 화면 */
 function step1() {
@@ -465,26 +557,22 @@ function stadiumSvg(m) {
 function step3() {
   const m = M(), z = Z();
   const zones = m.zones.map(x => `<button type="button" class="zone${S.zoneId === x.id ? ' on' : ''}" data-act="zone" data-id="${x.id}" style="--zc:${x.color}">
-      <span class="zdot"></span><span class="zname">${x.name}<small>${x.grade}석</small></span><span class="zprice">${won(x.price)}</span>
+      <span class="zdot"></span><span class="zname">${x.flag ? flagSvg(x.flag) : ''}${x.name}<small>${x.grade}석</small></span><span class="zprice">${won(x.price)}</span>
       <span class="zleft">잔여 ${freeCount(m, S.date, x.id)}석 · ${x.gate}번 게이트</span></button>`).join('');
   return `<div class="phead"><h2>좌석 선택</h2><p>경기장 그림이나 구역 목록에서 원하는 구역을 선택하세요.</p></div>
     <div class="seat-top"><div class="stadium">${stadiumSvg(m)}</div><div class="zones">${zones}</div></div>`;
 }
 
 function step4() {
-  const n = MAX, sum = cntSum();
-  return `<div class="phead"><h2>인원 선택</h2><p>권종별 인원을 정하세요. 한 번에 최대 ${MAX}매까지 예매할 수 있습니다.</p></div>
-  <div class="count-info"><span>${Z().name} · 최대 <strong>${n}매</strong> 중 <strong>${sum}매</strong> 선택</span></div>
-  <div class="types">${TYPES.map(t => `<div class="type">
-      <div class="tn">${t.name}<small>${t.note}</small></div>
-      <div class="tp">${won(priceOf(t))}</div>
-      <div class="stepperbox"><button type="button" data-act="cnt" data-id="${t.id}" data-d="-1" ${S.counts[t.id] ? '' : 'disabled'} aria-label="${t.name} 한 명 빼기">−</button>
-        <output aria-live="polite">${S.counts[t.id]}</output>
-        <button type="button" data-act="cnt" data-id="${t.id}" data-d="1" ${sum < n ? '' : 'disabled'} aria-label="${t.name} 한 명 더하기">+</button></div>
-    </div>`).join('')}</div>
+  const t = TYPES[0], sel = S.counts[t.id];
+  const boxes = Array.from({ length: MAX }, (_, i) => i + 1).map(n =>
+    `<button type="button" class="pbox${sel === n ? ' on' : ''}" data-act="people" data-id="${n}" aria-pressed="${sel === n}"><b>${n}</b><span>명</span></button>`).join('');
+  return `<div class="phead"><h2>인원 선택</h2><p>관람할 인원 수를 눌러 주세요. 한 번에 최대 ${MAX}명까지 예매할 수 있습니다.</p></div>
+  <div class="count-info"><span>${Z().name} · ${t.name} 1명 <strong>${won(priceOf(t))}</strong></span>
+    <span>${sel ? `<strong>${sel}명</strong> 선택 · 티켓 금액 <strong>${won(ticketSum())}</strong>` : '아직 선택하지 않았어요'}</span></div>
+  <div class="pboxes">${boxes}</div>
   <ul class="notice">
     <li>예매수수료는 1매당 ${won(FEE)}이 추가됩니다.</li>
-    <li>청소년·어린이 할인은 입장 시 증빙을 확인합니다. 확인되지 않으면 차액을 내야 합니다.</li>
   </ul>`;
 }
 
@@ -492,10 +580,7 @@ function step5() {
   const d = D(), deadline = toDate(d.d); deadline.setDate(deadline.getDate() - 1);
   const p = S.pay;
   const sub = {
-    card: `<div class="row2 sub-opts">
-        <div class="field"><label for="cardType">카드 종류</label><select id="cardType" data-pay="cardType">${['신용카드', '체크카드'].map(o => `<option${p.cardType === o ? ' selected' : ''}>${o}</option>`).join('')}</select></div>
-        <div class="field"><label for="inst">할부 개월</label><select id="inst" data-pay="inst">${['일시불', '2개월', '3개월', '6개월'].map(o => `<option${p.inst === o ? ' selected' : ''}>${o}</option>`).join('')}</select></div>
-      </div><div class="info-box">[결제하기]를 누른 뒤 NFC 스티커를 붙인 카드를 태블릿에 대면 결제됩니다. 카드 번호는 입력하지 않습니다.</div>`,
+    card: `<div class="info-box">[결제하기]를 누르면 카드 정보 입력 화면이 나타납니다. 실습 카드의 카드번호를 입력하세요. 실제 카드 정보는 입력하지 마세요.</div>`,
     bank: `<div class="info-box">결제 후 실습용 가상계좌가 발급됩니다. 입금 기한은 예매 다음 날 23:59까지이며, 기한 안에 입금하지 않으면 예매가 자동 취소됩니다.</div>`,
     phone: `<div class="info-box">휴대폰 인증을 마친 것으로 처리됩니다.</div>`,
     easy: `<div class="info-box">등록된 간편결제 수단으로 결제한 것으로 처리됩니다.</div>`
@@ -505,7 +590,7 @@ function step5() {
     <section>
       <p class="sec-title">결제 수단</p>
       <div class="methods">${[['card', '신용·체크카드'], ['bank', '무통장입금'], ['phone', '휴대폰 결제'], ['easy', '간편결제']].map(([v, l]) =>
-        `<label class="method"><input type="radio" name="pay" value="${v}" id="pay-${v}"${p.method === v ? ' checked' : ''}><span>${l}</span></label>`).join('')}</div>
+        `<label class="method"><input type="radio" name="pay" value="${v}" id="pay-${v}"${p.method === v ? ' checked' : ''}><span>${l}${PAY_ICONS[v]}</span></label>`).join('')}</div>
       ${sub}
     </section>
     <section>
@@ -537,10 +622,113 @@ function barcode(str) {
   return `<svg class="barcode" viewBox="0 0 ${x} 40" preserveAspectRatio="none" aria-hidden="true">${out}</svg>`;
 }
 
+/* 포토프린터(SELPHY CP1300) 엽서 용지 100×148mm 티켓 이미지: 1200×1776px (약 300dpi) */
+const PRINT_W = 1200, PRINT_H = 1776;
+const loadImg = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+function fitText(g, text, maxW, size, family, weight = '400') {
+  let s = size;
+  do { g.font = `${weight} ${s}px ${family}`; s -= 2; } while (g.measureText(text).width > maxW && s > 20);
+}
+async function drawPrintTicket() {
+  try { await Promise.all(['400 80px "Black Han Sans"', '700 40px "Noto Sans KR"', '400 28px "Noto Sans KR"'].map(f => document.fonts.load(f))); } catch (e) {}
+  const m = M(), z = Z(), d = D(), n = cntSum();
+  const DISP = '"Black Han Sans", "Malgun Gothic", sans-serif', BODY = '"Noto Sans KR", "Malgun Gothic", sans-serif';
+  const W = PRINT_W, H = PRINT_H, PAD = 70;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, H);
+
+  // 포스터 (위쪽, 선수 부분이 보이도록 잘라서)
+  const PH = 700;
+  try {
+    const img = await loadImg(m.img);
+    const s = W / img.naturalWidth, sh = PH / s, sy = (img.naturalHeight - sh) * 0.3;
+    g.drawImage(img, 0, sy, img.naturalWidth, sh, 0, 0, W, PH);
+  } catch (e) { g.fillStyle = m.home.color; g.fillRect(0, 0, W, PH); }
+
+  // 띠
+  g.fillStyle = m.home.color; g.fillRect(0, PH, W, 90);
+  g.fillStyle = '#ffffff'; g.textBaseline = 'middle';
+  g.font = `700 34px ${BODY}`; g.textAlign = 'left'; g.fillText(`${m.league} · ${d.label}`, PAD, PH + 45);
+  g.textAlign = 'right'; g.fillText('ENTRY TICKET', W - PAD, PH + 45);
+
+  // 팀 이름
+  g.textAlign = 'left'; g.fillStyle = '#18171d';
+  fitText(g, `${m.home.name} vs ${m.away.name}`, W - PAD * 2, 84, DISP);
+  g.fillText(`${m.home.name} vs ${m.away.name}`, PAD, PH + 175);
+
+  // 정보 표
+  const rows = [['일시', `${fmtDate(d.d)} ${d.t}`], ['장소', m.venue], ['구역', z.name], ['등급', `${z.grade}석`], ['인원', `${TYPES[0].name} ${n}명`], ['결제금액', won(total())]];
+  const colX = [PAD, W / 2 + 20], top = PH + 270, rowH = 125;
+  rows.forEach(([k, v], i) => {
+    const x = colX[i % 2], y = top + Math.floor(i / 2) * rowH;
+    g.fillStyle = '#696676'; g.font = `400 28px ${BODY}`; g.fillText(k, x, y);
+    g.fillStyle = k === '구역' ? m.home.color : '#18171d';
+    fitText(g, v, W / 2 - PAD - 30, 42, BODY, '700'); g.fillText(v, x, y + 50);
+  });
+
+  // 절취선
+  const cut = 1395;
+  g.strokeStyle = '#b9b5c8'; g.lineWidth = 4; g.setLineDash([18, 14]);
+  g.beginPath(); g.moveTo(PAD - 30, cut); g.lineTo(W - PAD + 30, cut); g.stroke(); g.setLineDash([]);
+
+  // 입장권 부분: 게이트 + 바코드
+  g.fillStyle = '#696676'; g.font = `700 28px ${BODY}`; g.fillText('입장 게이트', PAD, cut + 75);
+  g.fillStyle = '#18171d'; g.font = `400 96px ${DISP}`; g.fillText(`GATE ${z.gate}`, PAD, cut + 160);
+  const bx = 560, bw = W - PAD - bx, by = cut + 50, bh = 140;
+  let seed = hash(S.bookingNo), x = 0; const bars = [];
+  for (let i = 0; i < 70; i++) { seed = Math.imul(seed ^ (seed >>> 15), 2246822507) >>> 0; const w = 1 + (seed % 3); if (i % 2 === 0) bars.push([x, w]); x += w; }
+  const k = bw / x; g.fillStyle = '#18171d';
+  bars.forEach(([bx0, w]) => g.fillRect(bx + bx0 * k, by, w * k, bh));
+  g.font = `700 30px ${BODY}`; g.textAlign = 'center'; g.fillText(S.bookingNo, bx + bw / 2, by + bh + 40);
+
+  // 실습용 표시
+  const label = '실습용 · 입장 불가'; g.font = `700 30px ${BODY}`;
+  const lw = g.measureText(label).width + 48, ly = H - 95;
+  g.strokeStyle = '#e8343a'; g.lineWidth = 4; g.strokeRect(W / 2 - lw / 2, ly - 30, lw, 60);
+  g.fillStyle = '#e8343a'; g.fillText(label, W / 2, ly);
+  return c;
+}
+
+/* 바로 출력: 티켓 이미지를 미리 만들어 두었다가 인쇄 창(window.print)을 연다 */
+let printCache = null;
+function preparePrint() {
+  printCache = drawPrintTicket().then(c => new Promise(res => c.toBlob(blob => res({ url: c.toDataURL('image/png'), blob }), 'image/png')));
+  printCache.catch(() => {});
+}
+
+async function printTicket() {
+  if (!printCache) preparePrint();
+  let p;
+  try { p = await printCache; }
+  catch (e) { modal(`<h3>출력용 티켓을 만들지 못했습니다</h3><p>페이지를 새로 고친 뒤 다시 시도하세요.</p><button type="button" class="btn" data-act="closemodal">닫기</button>`); return; }
+  const area = $('printArea');
+  area.innerHTML = `<img src="${p.url}" alt="">`;
+  try { await area.querySelector('img').decode(); } catch (e) {}
+  window.print();
+  modal(`<h3>티켓 출력</h3>
+    <img class="print-prev" src="${p.url}" alt="출력용 티켓 미리보기">
+    <p>인쇄 화면에서 프린터는 <b>Canon SELPHY CP1300</b>, 용지는 <b>엽서(100×148mm)</b>를 고르세요.</p>
+    <p class="tap-note">인쇄 화면이 열리지 않거나 프린터가 목록에 없으면 [Canon PRINT로 보내기]를 누르세요.</p>
+    <div class="cp-actions" style="justify-content:center;flex-wrap:wrap">
+      <button type="button" class="btn" data-act="closemodal">닫기</button>
+      <button type="button" class="btn" data-act="shareticket">Canon PRINT로 보내기</button>
+      <button type="button" class="btn primary" data-act="printticket">다시 출력</button>
+    </div>`);
+}
+
+async function shareTicket() {
+  const p = await printCache;
+  const file = new File([p.blob], `ticket-${S.bookingNo}.png`, { type: 'image/png' });
+  if (!(navigator.canShare && navigator.canShare({ files: [file] }))) { toast('이 기기에서는 앱으로 보내기를 쓸 수 없습니다.'); return; }
+  try { await navigator.share({ files: [file], title: '예매 티켓' }); }
+  catch (e) { if (e.name !== 'AbortError') toast('앱으로 보내지 못했습니다. 다시 시도하세요.'); }
+}
+
 function step6() {
   const m = M(), z = Z(), d = D();
   const types = []; TYPES.forEach(t => { for (let i = 0; i < S.counts[t.id]; i++) types.push(t); });
-  const methodName = { card: `${S.pay.cardType} (${S.pay.inst})`, bank: '무통장입금', phone: '휴대폰 결제', easy: '간편결제' }[S.pay.method];
+  const methodName = { card: '신용·체크카드', bank: '무통장입금', phone: '휴대폰 결제', easy: '간편결제' }[S.pay.method];
   const pa = S.paidAt;
   const tickets = types.map((t, i) => {
     return `<article class="ticket" style="--tc:${m.home.color}">
@@ -560,7 +748,8 @@ function step6() {
     </article>`;
   }).join('');
   return `<div class="done-head"><span class="okmark">✓</span><h2>예매가 완료되었습니다</h2><p>예매번호</p><span class="bookno">${S.bookingNo}</span>
-    <p>경기 당일 입장 게이트에서 아래 모바일 티켓의 바코드를 보여주세요.</p></div>
+    <p>경기 당일 입장 게이트에서 아래 모바일 티켓의 바코드를 보여주세요.</p>
+    <button type="button" class="btn primary" data-act="printticket" style="margin-top:8px">티켓 바로 출력</button></div>
   <div class="tickets">${tickets}</div>
   <dl class="receipt">
     <div><dt>결제 일시</dt><dd>${pa.getFullYear()}.${pad(pa.getMonth() + 1)}.${pad(pa.getDate())} ${pad(pa.getHours())}:${pad(pa.getMinutes())}</dd></div>
@@ -614,6 +803,7 @@ function payProblem() {
 function renderBar() {
   if (S.step === 6) {
     $('bar').innerHTML = `<div class="bar-info"><small>예매번호 ${S.bookingNo}</small><b>${won(total())} 결제 완료</b></div>
+      <button type="button" class="btn" data-act="printticket">티켓 출력</button>
       <button type="button" class="btn primary" data-act="restart">새로 예매하기</button>`;
     return;
   }
@@ -642,60 +832,103 @@ function render() {
 /* 이동 */
 function go(n) {
   S.step = n; S.max = Math.max(S.max, n);
+  if (n === 6) preparePrint();
   render(); window.scrollTo(0, 0);
 }
 let toastT;
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200); }
-function modal(html) { $('modalCard').innerHTML = html; $('modal').hidden = !html; }
+function modal(html, wide) { const c = $('modalCard'); c.className = 'modal-card' + (wide ? ' wide' : ''); c.innerHTML = html; $('modal').hidden = !html; }
 
-/* 결제: 카드는 NFC 터치, 나머지 수단은 바로 승인 */
-let nfcAbort = null, payState = null;
-function stopNfc() { if (nfcAbort) { nfcAbort.abort(); nfcAbort = null; } }
+/* 결제: 카드는 카드번호 입력, 나머지 수단은 바로 승인 */
+const CARD = { number: '1234123412341234' }; // 실습 카드 (실제 카드 아님)
+const CP_FIELDS = [
+  { id: 'number', label: '카드번호', len: 16, groups: [4, 4, 4, 4], ph: '0000 0000 0000 0000' }
+];
+let payState = null, cp = null;
+const cpField = id => CP_FIELDS.find(f => f.id === id);
 
 function pay() {
-  if (S.pay.method === 'card') showTap(); else approve();
+  if (S.pay.method === 'card') openCardPay(); else approve();
 }
 
-function showTap() {
-  payState = 'tap';
-  modal(`<button type="button" class="tap" id="tapCard" disabled aria-label="화면의 카드를 눌러 결제">
-      <svg viewBox="0 0 200 120" aria-hidden="true">
-        <rect class="tap-tablet" x="96" y="8" width="96" height="104" rx="10"/>
-        <rect class="tap-screen" x="104" y="18" width="80" height="84" rx="4"/>
-        <g class="tap-waves"><path d="M150 46 a12 12 0 0 1 0 28"/><path d="M158 38 a22 22 0 0 1 0 44"/><path d="M166 30 a32 32 0 0 1 0 60"/></g>
-        <g class="tap-cardg"><rect class="tap-card" x="8" y="34" width="84" height="54" rx="6"/><rect class="tap-chip" x="18" y="50" width="14" height="11" rx="2"/><circle class="tap-nfc" cx="72" cy="56" r="8"/><rect class="tap-strip" x="18" y="72" width="44" height="5" rx="2"/></g>
-      </svg>
-    </button>
-    <h3>카드를 대어주세요</h3>
-    <p class="num">${won(total())} · ${S.pay.cardType} ${S.pay.inst}</p>
-    <p class="tap-note" id="tapNote">NFC를 준비하고 있습니다…</p>
-    <button type="button" class="btn" data-act="paycancel">결제 취소</button>`);
-  startNfc();
+function openCardPay() {
+  payState = 'card';
+  cp = { number: '', active: 'number', err: '', bad: null };
+  renderCardPay();
 }
 
-function tapFallback(msg) {
-  if (payState !== 'tap') return;
-  $('tapNote').textContent = msg;
-  const b = $('tapCard'); b.disabled = false; b.dataset.act = 'tapcard'; b.classList.add('clickable');
+function cpShow(f, v) {
+  if (f.mask) return '●'.repeat(v.length);
+  if (!f.groups) return v;
+  const out = []; let i = 0;
+  for (const g of f.groups) { if (i >= v.length) break; out.push(v.slice(i, i + g)); i += g; }
+  return out.join(' ');
 }
 
-async function startNfc() {
-  if (!('NDEFReader' in window)) { tapFallback('이 기기·브라우저는 NFC를 지원하지 않습니다. 화면의 카드를 누르면 결제됩니다.'); return; }
-  try {
-    nfcAbort = new AbortController();
-    const reader = new NDEFReader();
-    const hit = () => { if (payState === 'tap') { stopNfc(); approve(); } };
-    reader.onreading = hit;
-    reader.onreadingerror = hit; // 비어 있거나 형식이 다른 스티커도 터치로 인정
-    await reader.scan({ signal: nfcAbort.signal });
-    if (payState === 'tap') $('tapNote').textContent = 'NFC 스티커가 붙은 카드를 태블릿 뒷면에 가까이 대세요.';
-  } catch (err) {
-    nfcAbort = null;
-    tapFallback(err.name === 'NotAllowedError'
-      ? 'NFC 권한이 거부되었습니다. 브라우저 설정에서 NFC를 허용하거나, 화면의 카드를 눌러 결제하세요.'
-      : 'NFC를 켤 수 없습니다. 기기의 NFC 설정을 확인하거나, 화면의 카드를 눌러 결제하세요.');
+function cpFieldHtml(f) {
+  const v = cp[f.id], on = cp.active === f.id;
+  return `<button type="button" class="cp-field${on ? ' on' : ''}${cp.bad === f.id ? ' bad' : ''}" data-act="cpfield" data-id="${f.id}" aria-label="${f.label} 입력칸">
+    <span class="cp-label">${f.label}${f.note ? ` · ${f.note}` : ''}<em class="num">${v.length}/${f.len}</em></span>
+    <span class="cp-value">${cpShow(f, v)}${on ? '<span class="caret"></span>' : ''}${v ? '' : `<span class="ph">${f.ph}</span>`}</span>
+  </button>`;
+}
+
+function renderCardPay() {
+  const [num] = CP_FIELDS;
+  const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => `<button type="button" data-act="cpkey" data-k="${k}">${k}</button>`).join('');
+  modal(`<div class="cp-head"><h3>카드 정보 입력</h3><span class="cp-amount">${won(total())}</span></div>
+    <p class="cp-warn">실습용 결제입니다. 실제 카드 정보는 입력하지 마세요. 나눠 준 실습 카드의 카드번호 16자리를 입력하세요.</p>
+    <div class="cp-body">
+      <div class="cp-fields">
+        ${cpFieldHtml(num)}
+        <div class="cp-err" role="alert">${cp.err}</div>
+      </div>
+      <div class="keypad" aria-label="숫자 키패드">${keys}
+        <button type="button" class="fn" data-act="cpkey" data-k="clear">전체 지움</button>
+        <button type="button" data-act="cpkey" data-k="0">0</button>
+        <button type="button" class="fn" data-act="cpkey" data-k="back" aria-label="한 글자 지우기">← 지움</button>
+      </div>
+    </div>
+    <div class="cp-actions"><button type="button" class="btn" data-act="paycancel">결제 취소</button><button type="button" class="btn primary" data-act="cpsubmit">결제 요청</button></div>`, true);
+}
+
+function cpKey(k) {
+  if (payState !== 'card') return;
+  const f = cpField(cp.active);
+  cp.err = ''; cp.bad = null;
+  if (k === 'back') cp[f.id] = cp[f.id].slice(0, -1);
+  else if (k === 'clear') cp[f.id] = '';
+  else if (/^\d$/.test(k) && cp[f.id].length < f.len) {
+    cp[f.id] += k;
+    if (cp[f.id].length === f.len) { // 다 채우면 다음 빈 칸으로 이동
+      const next = CP_FIELDS.find(x => cp[x.id].length < x.len);
+      if (next) cp.active = next.id;
+    }
   }
+  renderCardPay();
 }
+
+function cpSubmit() {
+  for (const f of CP_FIELDS) {
+    if (cp[f.id].length < f.len) { cp.active = f.id; cp.bad = f.id; cp.err = `${f.label}를 끝까지 입력하세요.`; renderCardPay(); return; }
+  }
+  for (const f of CP_FIELDS) {
+    if (cp[f.id] !== CARD[f.id]) {
+      cp.active = f.id; cp.bad = f.id;
+      cp.err = `${f.label}가 맞지 않습니다. 실습 카드를 다시 확인하세요.`;
+      if (f.mask) cp[f.id] = '';
+      renderCardPay(); return;
+    }
+  }
+  cp = null; approve();
+}
+
+document.addEventListener('keydown', e => {
+  if (payState !== 'card') return;
+  if (/^\d$/.test(e.key)) { cpKey(e.key); e.preventDefault(); }
+  else if (e.key === 'Backspace') { cpKey('back'); e.preventDefault(); }
+  else if (e.key === 'Enter') { cpSubmit(); e.preventDefault(); }
+});
 
 function approve() {
   payState = 'approving';
@@ -723,26 +956,27 @@ document.addEventListener('click', e => {
       if (S.matchId !== id) { S = fresh(); S.matchId = id; }
       render(); break;
     case 'date':
-      if (S.date !== id) { S.date = id; S.zoneId = null; S.counts = { adult: 0, youth: 0, child: 0 }; S.max = 2; }
+      if (S.date !== id) { S.date = id; S.zoneId = null; S.counts = { youth: 0 }; S.max = 2; }
       render(); break;
     case 'zone':
       if (S.zoneId !== id) { S.zoneId = id; S.max = 3; }
       render(); break;
-    case 'cnt': {
-      const d = +el.dataset.d, v = S.counts[id] + d;
-      if (v < 0 || cntSum() + d > MAX) return;
-      S.counts[id] = v; S.max = 4; render(); break;
-    }
+    case 'people': S.counts = { youth: +id }; S.max = 4; render(); break;
     case 'goto': go(+id); break;
     case 'prev': go(S.step - 1); break;
     case 'next':
       if (!valid(S.step)) { toast(S.step === 5 ? payProblem() : HINTS[S.step]); return; }
       if (S.step === 5) pay(); else go(S.step + 1);
       break;
-    case 'tapcard': if (payState === 'tap') approve(); break;
-    case 'paycancel': stopNfc(); payState = null; modal(''); toast('결제를 취소했습니다.'); break;
+    case 'cpfield': if (payState === 'card') { cp.active = id; renderCardPay(); } break;
+    case 'cpkey': cpKey(el.dataset.k); break;
+    case 'cpsubmit': if (payState === 'card') cpSubmit(); break;
+    case 'paycancel': payState = null; cp = null; modal(''); toast('결제를 취소했습니다.'); break;
     case 'showtickets': payState = null; modal(''); go(6); break;
-    case 'restart': stopNfc(); payState = null; S = fresh(); modal(''); render(); window.scrollTo(0, 0); break;
+    case 'printticket': printTicket(); break;
+    case 'shareticket': shareTicket(); break;
+    case 'closemodal': modal(''); break;
+    case 'restart': payState = null; cp = null; printCache = null; S = fresh(); modal(''); render(); window.scrollTo(0, 0); break;
   }
 });
 
