@@ -88,7 +88,7 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 @media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; min-width: 0; }
 @media (max-width: 560px) { .panel { padding: 18px 14px; } }
-.phead { display: grid; gap: 4px; margin-bottom: 20px; }
+.boot { display: grid; gap: 8px; padding: 40px 8px; text-align: center; color: var(--muted); } display: grid; gap: 4px; margin-bottom: 20px; }
 .phead h2 { font-size: 22px; font-weight: 900; }
 .phead p { margin: 0; color: var(--muted); }
 .sec-title { font-size: 16px; font-weight: 700; margin: 0 0 12px; }
@@ -254,7 +254,7 @@ dl { margin: 0; }
 
 /* Toast & modal */
 .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 88px); transform: translateX(-50%); z-index: 30; background: var(--fg); color: var(--surface); padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; max-width: calc(100% - 32px); text-align: center; box-shadow: var(--shadow); }
-.modal { position: fixed; inset: 0; z-index: 40; background: rgb(10 10 14 / .55); display: grid; place-items: center; padding: 16px; }
+.modal { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 40; background: rgb(10 10 14 / .55); display: grid; place-items: center; padding: 16px; }
 .modal-card { background: var(--surface); border-radius: 12px; padding: 28px 24px; width: min(380px, 100%); text-align: center; display: grid; gap: 12px; justify-items: center; box-shadow: var(--shadow); }
 .modal-card h3 { font-size: 18px; }
 .modal-card p { margin: 0; color: var(--muted); font-size: 14px; }
@@ -270,12 +270,12 @@ dl { margin: 0; }
   body > #printArea { display: block !important; }
   #printArea img { display: block; width: 100mm; height: 148mm; max-width: none; }
 }
-.print-prev { display: block; width: auto; max-width: 100%; max-height: 58dvh; margin: 0 auto; border-radius: 6px; box-shadow: 0 0 0 1px var(--line), var(--shadow); }
+.print-prev { display: block; width: auto; max-width: 100%; max-height: 58vh; max-height: 58dvh; margin: 0 auto; border-radius: 6px; box-shadow: 0 0 0 1px var(--line), var(--shadow); }
 .btn.dl { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .tap-note { font-size: 13px !important; }
 
 /* 카드 정보 입력 (실습용 키패드) */
-.modal-card.wide { width: min(860px, 100%); text-align: left; justify-items: stretch; padding: 24px; gap: 16px; max-height: calc(100dvh - 32px); overflow: auto; }
+.modal-card.wide { width: min(860px, 100%); text-align: left; justify-items: stretch; padding: 24px; gap: 16px; max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow: auto; }
 .cp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .cp-head h3 { font-size: 20px; }
 .cp-amount { font-size: 18px; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; }
@@ -317,7 +317,7 @@ dl { margin: 0; }
   .btn { height: 56px; font-size: 17px; padding: 0 28px; }
   .btn.primary { min-width: 180px; }
   .match { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
-  .match > .poster, .match > .poster-wrap { width: calc(min(52dvh, 440px) * 2 / 3); }
+  .match > .poster, .match > .poster-wrap { width: calc(min(52vh, 440px) * 2 / 3); width: calc(min(52dvh, 440px) * 2 / 3); }
   .match .minfo { padding-top: 4px; }
   .pay-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
   .pay-grid > section:first-child { grid-row: span 2; }
@@ -373,7 +373,7 @@ dl { margin: 0; }
 </header>
 <nav class="stepper" aria-label="예매 단계"><ol class="wrap" id="stepper"></ol></nav>
 <div class="wrap layout" id="layout">
-  <main class="panel" id="main"></main>
+  <main class="panel" id="main"><div class="boot"><h2>예매 화면을 불러오는 중입니다</h2><p>이 문구가 계속 보이면 파일 미리보기 화면에서 연 것입니다. Safari나 Chrome 같은 인터넷 브라우저에서 웹 주소로 열어 주세요.</p></div></main>
   <aside class="aside" id="aside" aria-label="예매 정보"></aside>
 </div>
 <div class="bar"><div class="wrap" id="bar"></div></div>
